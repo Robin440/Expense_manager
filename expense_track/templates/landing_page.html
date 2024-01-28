@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="jumbotron text-center">
+        <h1 class="display-4">Welcome to Expense Tracker</h1>
+        <p class="lead">Manage your expenses with ease.</p>
+        <hr class="my-4">
+        <p>Log in to get started!</p>
+        <a class="btn btn-primary btn-lg" href="{% url 'user_login_page' %}" role="button">Login</a>
+    </div>
+    <!-- Add other content as needed -->
+{% endblock %}

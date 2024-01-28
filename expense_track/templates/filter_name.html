@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="text-right font-weight-bold mb-4">MY EXPENSE BY SEARCH</h2>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <!-- Add this input field for name and category search -->
+                <form action="{% url 'search_expenses' %}" method="POST" class="form-inline">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="search_input" name="search_input" placeholder="Search by Name or Category">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+            </div>
+            <div class="col-md-2 text-right">
+                <a href="{% url 'logout_user' %}" class="btn btn-danger ml-2">Logout</a>
+            </div>
+            <div class="col-md-2">
+                <!-- Add a button to go back to the home page -->
+                <a href="{% url 'home_page' %}" class="btn btn-primary">Back to Home</a>
+            </div>
+        </div>
+
+        {% if messages %}
+            <div class="alert alert-danger">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Date of Expenses</th>
+                    <th>Amount</th>
+                    <th>Updated At</th>
+                    <th>Created by</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in filtered_expenses %}
+                    <tr>
+                        <td>{{ expense.name }}</td>
+                        <td>{{ expense.category }}</td>
+                        <td>{{ expense.date_of_expense }}</td>
+                        <td>INR {{ expense.amount }}</td>
+                        <td>{{ expense.created_at }}</td>
+                        <td>{{ expense.created_by }}</td>
+                        <td>
+                            <a href="{% url 'edit_expense' expense.id %}" type="button" class="btn btn-warning" data-toggle="modal" data-target="#editExpenseModal">Edit</a>
+                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteExpenseModal">Delete</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+  
+
+
+
+
+
+<div class="modal fade" id="editExpenseModal" tabindex="-1" role="dialog" aria-labelledby="editExpenseModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title font-weight-bold" id="editExpenseModalLabel">Edit Expense</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="editExpenseForm">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" name="name" class="form-control" value="{{i.name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea name="description" class="form-control" rows="3">{{ expense.description }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category:</label>
+                        <select name="category" class="form-control" required>
+                            <option value="Health">Health</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Travel">Travel</option>
+                            <option value="Education">Education</option>
+                            <option value="Books">Books</option>
+                            <option value="Others">Others</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date_of_expense">Date of Expense:</label>
+                        <input type="date" name="date_of_expense" class="form-control" value="{{ expense_to_edit.date_of_expense }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">Amount:</label>
+                        <input type="number" name="amount" class="form-control" value="{{ expense_to_edit.amount }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<div class="modal fade" id="deleteExpenseModal" tabindex="-1" role="dialog" aria-labelledby="deleteExpenseModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title font-weight-bold" id="deleteExpenseModalLabel">Delete Expense</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the expense?</p>
+                <button type="button" class="btn btn-danger">Yes</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
